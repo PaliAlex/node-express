@@ -51,6 +51,37 @@ class Cart {
             )
         })
     }
+
+    static async remove(id) {
+        const cart = await Cart.fetch();
+
+        const index = cart.courses.findIndex(it => it.id === id);
+
+        const course = cart.courses[index];
+
+        if (course.count === 1 ) {
+            //delete
+            cart.courses = cart.courses.filter(it => it.id !== id);
+        } else {
+            //change amount
+            cart.courses[index].count--;
+            cart.price -= course.price;
+        }
+
+        return new Promise((resolve, reject) => {
+            fs.writeFile(
+                path.join(__dirname, '..', 'data', 'cart.json'),
+                JSON.stringify(cart),
+                (error) => {
+                    if(error) {
+                        reject(error)
+                    } else {
+                        resolve(cart)
+                    }
+                }
+            )
+        })
+    }
 }
 
 module.exports = Cart;

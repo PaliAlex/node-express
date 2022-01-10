@@ -10,6 +10,14 @@ router.post('/add', async (request, response) => {
     response.redirect('/cart')
 })
 
+router.delete(
+    '/remove/:id',
+    async (request, response) => {
+        const cart = await Cart.remove(request.params.id);
+
+        response.status(200).json(cart);
+    }
+)
 
 router.get('/', async (request, response) => {
     const cart = await Cart.fetch()
