@@ -15,14 +15,19 @@ router.get(
 router.post(
     '/',
     async (request, response) => {
-        const course = new Course(
-            request.body.title,
-            request.body.price,
-            request.body.image,
-        );
 
-        await course.save();
-        response.redirect('/courses');
+        const course = new Course({
+            title: request.body.title,
+            price: request.body.price,
+            image: request.body.image,
+        });
+
+        try{
+            await course.save();
+            response.redirect('/courses');
+        } catch (error) {
+            console.log(error)
+        }
     }
 )
 
