@@ -5,7 +5,7 @@ const router = Router();
 router.get(
     '/',
     async (request, response, next) => {
-        const courses = await Courses.getAll();
+        const courses = await Courses.find();
         response.render('courses', {
             title: 'Courses',
             isCourses: true,
@@ -21,20 +21,17 @@ router.get(
             return response.redirect('/')
         }
 
-        const course = await Courses.getAllById(request.params.id);
+        const course = await Courses.findById(request.params.id);
 
         response.render('course-edit', {
             title: `Edit ${course.title}`,
             course,
         })
-        console.log(request.body);
 
         router.post(
             '/edit',
             async (request, response) => {
-                console.log(request.body);
-
-                await Courses.update(request.body);
+                await Courses.findByIdAndUpdate(request.body.id, request.body);
                 response.redirect('/courses');
             }
         )
@@ -44,13 +41,27 @@ router.get(
 router.get(
     '/:id',
     async (request, response) => {
-        const course = await Courses.getAllById(request.params.id);
+        const course = await Courses.findById(request.params.id);
 
         response.render('course', {
             layout: 'empty',
             title: `Course`,
             course,
         })
+    }
+)
+
+router.post(
+    '/remove',
+    async (request, response) => {
+        try {
+            await Courses.deleteOne({
+                _id: request.body.id,
+            })
+            response.redirect('/courses')
+        } catch (error) {
+            console.log(error)
+        }
     }
 )
 
