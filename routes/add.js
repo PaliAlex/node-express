@@ -20,6 +20,7 @@ router.post(
             title: request.body.title,
             price: request.body.price,
             image: request.body.image,
+            userId: request.user,
         });
 
         try{

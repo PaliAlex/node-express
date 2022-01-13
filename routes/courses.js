@@ -5,7 +5,10 @@ const router = Router();
 router.get(
     '/',
     async (request, response, next) => {
-        const courses = await Courses.find();
+        const courses = await Courses.find()
+            .populate('userId', 'email name')
+            .select('price title image');
+
         response.render('courses', {
             title: 'Courses',
             isCourses: true,
