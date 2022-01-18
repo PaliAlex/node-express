@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const expHbs = require('express-handlebars');
 const Handlebars = require('handlebars');
 const session = require('express-session');
+const csrf = require('csurf');
+const flash = require('connect-flash');
 const MongoStore = require('connect-mongodb-session')(session);
 const {allowInsecurePrototypeAccess} = require("@handlebars/allow-prototype-access");
 
@@ -13,7 +15,6 @@ const cartRoutes = require('./routes/cart');
 const coursesRoutes = require('./routes/courses');
 const ordersRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
-const User = require('./models/user');
 const varMiddleware = require('./middleware/variables');
 const userMiddleware = require('./middleware/user');
 
@@ -43,6 +44,8 @@ app.use(session({
     saveUninitialized: false,
     store,
 }))
+app.use(csrf());
+app.use(flash());
 app.use(varMiddleware);
 app.use(userMiddleware);
 
@@ -59,17 +62,6 @@ const start = async() => {
 
     try {
         await mongoose.connect(MONGODB_URL);
-
-        // const candidate = await User.findOne();
-        //
-        // if (!candidate) {
-        //     const user = new User({
-        //         email: 'Sasha@yyy.com',
-        //         name: 'Sasha',
-        //         cart: { items:[] },
-        //     })
-        //     await user.save();
-        // }
 
         app.listen(PORT, () => {
             console.log(`Server runs on port ${PORT}`);

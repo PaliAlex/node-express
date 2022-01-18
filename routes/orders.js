@@ -8,7 +8,7 @@ router.get(
     auth,
     async (request, response, next) => {
         try {
-            const orders = await Order.find({'user.UserId': request.user._id}).populate('user.userId');
+            const orders = await Order.find({'user.userId': request.user._id}).populate('user.userId');
 
             response.render('orders', {
                 title: 'Orders',

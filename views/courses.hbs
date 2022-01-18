@@ -20,6 +20,7 @@
                             <input type="hidden" name="id" value="{{id}}">
 
                             <button type="submit" class="btn btn-primary">BUY</button>
+                            <input type="hidden" name="_csrf" value="{{@root.csrf}}">
                         </form>
                     {{/if}}
                 </div>
