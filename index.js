@@ -26,9 +26,10 @@ const store = new MongoStore({
     uri: keys.MONGODB_URL,
 });
 const hbs = expHbs.create({
-   defaultLayout: 'main',
-   extname: 'hbs',
-   handlebars: allowInsecurePrototypeAccess(Handlebars),
+    defaultLayout: 'main',
+    extname: 'hbs',
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
+    helpers: require('./utils/hbs-helpers'),
 });
 
 app.engine('hbs', hbs.engine);
