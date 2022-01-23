@@ -14,9 +14,11 @@ const addRoutes = require('./routes/add');
 const cartRoutes = require('./routes/cart');
 const coursesRoutes = require('./routes/courses');
 const ordersRoutes = require('./routes/orders');
+const profileRoutes = require('./routes/profile');
 const authRoutes = require('./routes/auth');
 const varMiddleware = require('./middleware/variables');
 const userMiddleware = require('./middleware/user');
+const errorMiddleware = require('./middleware/error');
 
 const keys = require('./keys');
 
@@ -55,7 +57,10 @@ app.use('/add', addRoutes);
 app.use('/cart', cartRoutes);
 app.use('/courses', coursesRoutes);
 app.use('/orders', ordersRoutes);
+app.use('/profile', profileRoutes);
 app.use('/auth', authRoutes);
+
+app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 3000;
 

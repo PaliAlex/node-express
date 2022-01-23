@@ -2,13 +2,14 @@ const { Router } = require('express');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { body, validationResult } = require('express-validator/check');
+const { validationResult } = require('express-validator');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const router = Router();
 const User = require('../models/user');
 const keys = require('../keys');
 const regEmail = require('../emails/registration');
 const resetEmail = require('../emails/reset');
+const { registerValidators } = require('../utils/validators');
 
 const transporter = nodemailer.createTransport(sendgrid({
     auth: {
@@ -74,11 +75,10 @@ router.post('/login',
 
 router.post(
     '/register',
-    body('email').isEmail(),
+    registerValidators,
     async (request, response) => {
         try{
-            const { email, password, confirm, name } = request.body;
-            const candidate = await User.findOne({ email });
+            const { email, password, name } = request.body;
 
             const errors = validationResult(request);
             if (!errors.isEmpty()) {
@@ -86,21 +86,14 @@ router.post(
 
                 return response.status(422).redirect('/auth/login#register');
             }
+            const hashPassword = await bcrypt.hash(password, 10)
+            const user = new User({
+                email, password: hashPassword, name, cart: { items: []},
+            })
+            await user.save();
 
-            if (candidate) {
-                request.flash('registerError', 'User with the same name exists');
-                response.redirect('/auth/login#register')
-            } else {
-                const hashPassword = await bcrypt.hash(password, 10)
-                const user = new User({
-                    email, password: hashPassword, name, cart: { items: []},
-                })
-                await user.save();
-
-                await transporter.sendMail(regEmail(email));
-                response.redirect('/auth/login#login');
-            }
-
+            await transporter.sendMail(regEmail(email));
+            response.redirect('/auth/login#login');
         } catch (error) {
             console.log(error)
         }
